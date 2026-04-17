@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import kr.ac.hansung.cse.exception.ProductNotFoundException;
 import kr.ac.hansung.cse.model.Product;
 import kr.ac.hansung.cse.model.ProductForm;
+import kr.ac.hansung.cse.service.CategoryService;
 import kr.ac.hansung.cse.service.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +16,7 @@ import java.util.List;
 
 /**
  * =====================================================================
- * ProductController - 웹 요청 처리 계층 (Controller Layer)
+ * ProductController - 웹요청 처리 계층 (Controller Layer)
  * =====================================================================
  *
  * MVC 패턴에서 Controller의 역할:
@@ -23,47 +24,64 @@ import java.util.List;
  *   2. Service로부터 받은 결과를 Model에 담아 View에 전달합니다.
  *   3. 어떤 View를 렌더링할지 결정하여 뷰 이름을 반환합니다.
  *
- * [엔드포인트 목록]
- * GET  /products          → 상품 목록
- * GET  /products/{id}     → 상품 상세
- * GET  /products/create   → 상품 등록 폼
- * POST /products/create   → 상품 등록 처리
- * GET  /products/{id}/edit  → 상품 수정 폼
- * POST /products/{id}/edit  → 상품 수정 처리
- * POST /products/{id}/delete → 상품 삭제 처리
+ * [핸들러 메서드 목록]
+ * GET  /products            -> 상품 목록
+ * GET  /products/{id}       -> 상품 상세
+ * GET  /products/create     -> 상품 등록 폼
+ * POST /products/create     -> 상품 등록 처리
+ * GET  /products/{id}/edit  -> 상품 수정 폼
+ * POST /products/{id}/edit  -> 상품 수정 처리
+ * POST /products/{id}/delete -> 상품 삭제 처리
  */
 @Controller
 @RequestMapping("/products")
 public class ProductController {
 
     private final ProductService productService;
+    private final CategoryService categoryService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService,
+                             CategoryService categoryService) {
         this.productService = productService;
+        this.categoryService = categoryService;
     }
 
 
-    // ─────────────────────────────────────────────────────────────────
+    // -----------------------------------------------------------------
     // GET /products - 상품 목록 조회
-    // ─────────────────────────────────────────────────────────────────
+    // -----------------------------------------------------------------
 
     @GetMapping
-    public String listProducts(Model model) {
-        List<Product> products = productService.getAllProducts();
+    public String listProducts(@RequestParam(required = false) String keyword,
+                               @RequestParam(required = false) Long categoryId,
+                               Model model) {
+        List<Product> products;
+
+        if (keyword != null && !keyword.isBlank()) {
+            products = productService.searchByName(keyword);
+        } else if (categoryId != null) {
+            products = productService.searchByCategory(categoryId);
+        } else {
+            products = productService.getAllProducts();
+        }
+
         model.addAttribute("products", products);
+        model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("categoryId", categoryId);
         return "productList";
     }
 
-    // ─────────────────────────────────────────────────────────────────
+    // -----------------------------------------------------------------
     // GET /products/{id} - 상품 상세 조회
-    // ─────────────────────────────────────────────────────────────────
+    // -----------------------------------------------------------------
 
     /**
      * @PathVariable : URL 경로의 변수를 메서드 파라미터로 바인딩합니다.
-     *                 예) GET /products/1 → id = 1L
+     *                 예: GET /products/1 -> id = 1L
      *
      * ProductNotFoundException: 커스텀 예외를 사용합니다.
-     *   → GlobalExceptionHandler.handleProductNotFound()가 처리합니다.
+     *   -> GlobalExceptionHandler.handleProductNotFound()가 처리합니다.
      */
     @GetMapping("/{id}")
     public String showProduct(@PathVariable Long id, Model model) {
@@ -74,20 +92,20 @@ public class ProductController {
         return "productView";
     }
 
-    // ─────────────────────────────────────────────────────────────────
+    // -----------------------------------------------------------------
     // GET /products/create - 상품 등록 폼 표시
-    // ─────────────────────────────────────────────────────────────────
+    // -----------------------------------------------------------------
 
     /**
      * 빈 ProductForm 객체를 Model에 담아 폼을 표시합니다.
      *
      * [ProductForm DTO를 사용하는 이유]
      * 1. Bean Validation 어노테이션을 엔티티가 아닌 DTO에 적용합니다.
-     * 2. JPA 엔티티의 보호 생성자 문제를 우회합니다.
-     * 3. 외부에서 수정 불가한 필드(id 등)를 폼에서 분리합니다.
+     * 2. JPA 엔티티의 보호 생성자 문제를 피할 수 있습니다.
+     * 3. 화면에서 수정 불가능한 필드(id 등)를 폼에서 분리합니다.
      *
      * Model attribute 이름: "productForm"
-     *   → Thymeleaf에서 th:object="${productForm}"으로 접근합니다.
+     *   -> Thymeleaf에서 th:object="${productForm}"으로 연결됩니다.
      */
     @GetMapping("/create")
     public String showCreateForm(Model model) {
@@ -95,9 +113,9 @@ public class ProductController {
         return "productForm";
     }
 
-    // ─────────────────────────────────────────────────────────────────
+    // -----------------------------------------------------------------
     // POST /products/create - 상품 등록 처리
-    // ─────────────────────────────────────────────────────────────────
+    // -----------------------------------------------------------------
 
     /**
      * @Valid: productForm에 선언된 Bean Validation 어노테이션을 실행합니다.
@@ -106,7 +124,7 @@ public class ProductController {
      * @ModelAttribute("productForm") ProductForm productForm:
      *   - HTTP POST 요청 파라미터를 ProductForm 객체에 자동 바인딩합니다.
      *   - "productForm" 이름으로 Model에 자동 등록됩니다.
-     *   - @Valid에 의해 검증이 수행됩니다.
+     *   - @Valid와 함께 검증이 수행됩니다.
      *
      * BindingResult bindingResult:
      *   - 검증 결과(오류 목록)를 담는 객체입니다.
@@ -115,11 +133,11 @@ public class ProductController {
      *   - BindingResult가 있으면 오류를 직접 처리할 수 있습니다.
      *
      * [처리 흐름]
-     * ① Spring MVC가 폼 파라미터 → ProductForm 바인딩
-     * ② @Valid에 의해 Bean Validation 실행
-     * ③ bindingResult.hasErrors()로 오류 확인
-     *   - 오류 있음 → 폼 뷰로 돌아감 (오류 메시지 표시)
-     *   - 오류 없음 → 서비스 호출 → 리다이렉트 (PRG 패턴)
+     * -> Spring MVC가 요청 파라미터 -> ProductForm 바인딩
+     * -> @Valid를 통해 Bean Validation 수행
+     * -> bindingResult.hasErrors()로 오류 확인
+     *   - 오류 있음 -> 폼 뷰로 돌아감(오류 메시지 표시)
+     *   - 오류 없음 -> 서비스 호출 후 리다이렉트(PRG 패턴)
      */
     @PostMapping("/create")
     public String createProduct(@Valid @ModelAttribute("productForm") ProductForm productForm,
@@ -127,13 +145,13 @@ public class ProductController {
                                 RedirectAttributes redirectAttributes) {
 
         // 검증 오류가 있으면 폼을 다시 표시합니다.
-        // bindingResult는 productForm과 함께 Model에 자동으로 포함되므로
-        // Thymeleaf에서 th:errors로 오류 메시지에 접근할 수 있습니다.
+        // bindingResult와 productForm은 함께 Model에 자동으로 포함되므로
+        // Thymeleaf에서 th:errors로 오류 메시지를 연결할 수 있습니다.
         if (bindingResult.hasErrors()) {
-            return "productForm"; // 오류가 있는 채로 폼 뷰 재표시
+            return "productForm"; // 오류가 있는 채로 폼 뷰를 표시
         }
 
-        // 검증 통과: ProductForm → Product 엔티티 변환 후 저장
+        // 검증 통과: ProductForm -> Product 엔티티 변환 후 저장
         // category 이름으로 Category 엔티티를 조회하여 연결합니다.
         Product product = productForm.toEntity();
         product.setCategory(productService.resolveCategory(productForm.getCategory()));
@@ -143,34 +161,34 @@ public class ProductController {
         redirectAttributes.addFlashAttribute("successMessage",
                 "'" + savedProduct.getName() + "' 상품이 성공적으로 등록되었습니다.");
 
-        // PRG 패턴: POST → Redirect → GET (중복 제출 방지)
+        // PRG 패턴: POST -> Redirect -> GET (중복 제출 방지)
         return "redirect:/products";
     }
 
-    // ─────────────────────────────────────────────────────────────────
+    // -----------------------------------------------------------------
     // GET /products/{id}/edit - 상품 수정 폼 표시
-    // ─────────────────────────────────────────────────────────────────
+    // -----------------------------------------------------------------
 
     /**
      * 기존 상품 데이터를 조회하여 수정 폼에 채워 표시합니다.
-     * ProductForm.from(product)으로 엔티티 → DTO 변환합니다.
+     * ProductForm.from(product)로 엔티티 -> DTO 변환합니다.
      */
     @GetMapping("/{id}/edit")
     public String showEditForm(@PathVariable Long id, Model model) {
         Product product = productService.getProductById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
 
-        // 엔티티 → DTO 변환 (기존 데이터로 폼 초기화)
+        // 엔티티 -> DTO 변환(기존 데이터로 폼 초기화)
         model.addAttribute("productForm", ProductForm.from(product));
         return "productEditForm";
     }
 
-    // ─────────────────────────────────────────────────────────────────
+    // -----------------------------------------------------------------
     // POST /products/{id}/edit - 상품 수정 처리
-    // ─────────────────────────────────────────────────────────────────
+    // -----------------------------------------------------------------
 
     /**
-     * [JPA 엔티티 수정 방식 설명]
+     * [JPA 엔티티의 수정 방식 설명]
      *
      * getProductById()는 readOnly 트랜잭션에서 실행됩니다.
      * 반환된 Product 엔티티는 트랜잭션 종료 후 "준영속(Detached) 상태"가 됩니다.
@@ -193,7 +211,7 @@ public class ProductController {
                                 RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            return "productEditForm"; // 오류가 있는 채로 수정 폼 재표시
+            return "productEditForm"; // 오류가 있는 채로 수정 폼을 표시
         }
 
         // 기존 엔티티 조회 (준영속 상태로 반환됨)
@@ -214,9 +232,9 @@ public class ProductController {
         return "redirect:/products/" + id;
     }
 
-    // ─────────────────────────────────────────────────────────────────
+    // -----------------------------------------------------------------
     // POST /products/{id}/delete - 상품 삭제 처리
-    // ─────────────────────────────────────────────────────────────────
+    // -----------------------------------------------------------------
 
     /**
      * HTML 폼은 GET/POST만 지원하므로 DELETE 대신 POST를 사용합니다.
@@ -236,7 +254,7 @@ public class ProductController {
         productService.deleteProduct(id);
 
         redirectAttributes.addFlashAttribute("successMessage",
-                "'" + productName + "' 상품이 삭제되었습니다.");
+                "'" + productName + "' 상품을 삭제했습니다.");
         return "redirect:/products";
     }
 }
