@@ -27,7 +27,6 @@
         input:focus, textarea:focus, select:focus {
             outline: none; border-color: #e67e22; box-shadow: 0 0 0 3px rgba(230,126,34,0.15);
         }
-        /* 검증 오류 스타일 */
         .field-error { border-color: #e74c3c !important; }
         .error-msg { color: #e74c3c; font-size: 0.85em; margin-top: 5px; display: block; }
         textarea { height: 120px; resize: vertical; }
@@ -45,25 +44,8 @@
         <span class="editing-badge" th:text="'ID: #' + ${productForm.id}">ID: #1</span>
     </h1>
 
-    <!--
-        th:href: 상세 페이지 URL을 동적으로 생성합니다.
-        @{/products/{id}(id=${productForm.id})} → /products/1, /products/2 등
-    -->
     <a class="back-btn" th:href="@{/products/{id}(id=${productForm.id})}">← 상세 페이지로 돌아가기</a>
 
-    <!--
-        수정 폼:
-          - th:action에 {id}를 경로 변수로 사용합니다.
-          - th:object로 productForm을 바인딩합니다.
-
-        [오류 재표시 흐름]
-        1. 사용자가 수정 폼 제출 (POST /products/{id}/edit)
-        2. @Valid 검증 실패 → bindingResult에 오류 저장
-        3. 컨트롤러가 "productEditForm" 뷰 이름 반환
-        4. Spring MVC가 productForm (오류 포함)을 Model에 자동 포함
-        5. Thymeleaf가 th:errors로 오류 메시지 렌더링
-        6. th:classappend로 오류 필드에 빨간 테두리 적용
-    -->
     <form th:action="@{/products/{id}/edit(id=${productForm.id})}"
           th:object="${productForm}"
           method="post">
@@ -72,22 +54,10 @@
             <label for="name">
                 상품명 <span class="required">*</span>
             </label>
-            <!--
-                th:classappend:
-                  - 조건에 따라 CSS 클래스를 추가합니다.
-                  - #fields.hasErrors('name'): 'name' 필드에 검증 오류가 있으면 true
-                  - 오류가 있을 때 "field-error" 클래스 추가 → 빨간 테두리
-            -->
             <input type="text"
                    th:field="*{name}"
                    th:classappend="${#fields.hasErrors('name')} ? 'field-error'"
                    placeholder="상품명을 입력하세요" />
-            <!--
-                th:errors="*{name}":
-                  - 'name' 필드의 모든 검증 오류 메시지를 표시합니다.
-                  - 복수 오류는 <br>로 구분됩니다.
-                  - 오류가 없으면 이 요소는 렌더링되지 않습니다.
-            -->
             <span class="error-msg" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">이름 오류</span>
         </div>
 
@@ -131,29 +101,23 @@
         <div class="form-group">
             <button type="submit" class="btn-submit">수정 완료</button>
         </div>
-
     </form>
 
     <hr>
-    <div style="margin-top:20px; font-size:14px; color:#555;">
-        실습 수행 일시: <span id="datetime"></span> |
-        학번: 2071403 |
-        성명: 권민서
-    </div>
+    <div id="practice-footer" style="margin-top:20px; font-size:14px; color:#555;"></div>
 
     <script>
     function updateDateTime() {
         const now = new Date();
-
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
         const seconds = String(now.getSeconds()).padStart(2, '0');
-
-        const formatted = `${year}년 ${month}월 ${day}일 ${hours}:${minutes}:${seconds}`;
-        document.getElementById("datetime").textContent = formatted;
+        const formatted = `${year}\uB144 ${month}\uC6D4 ${day}\uC77C ${hours}:${minutes}:${seconds}`;
+        const footerText = `\uC2E4\uC2B5 \uC218\uD589 \uC77C\uC2DC: ${formatted} | \uD559\uBC88: 2071403 | \uC131\uBA85: \uAD8C\uBBFC\uC11C`;
+        document.getElementById("practice-footer").textContent = footerText;
     }
 
     setInterval(updateDateTime, 1000);

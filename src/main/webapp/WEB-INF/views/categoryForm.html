@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>카테고리 등록</title>
+    <title>&#xce74;&#xd14c;&#xace0;&#xb9ac; &#xb4f1;&#xb85d;</title>
     <style>
         body {
             font-family: 'Malgun Gothic', Arial, sans-serif;
@@ -95,30 +95,51 @@
 </head>
 <body>
 
-<h1>카테고리 등록</h1>
+<h1>&#xce74;&#xd14c;&#xace0;&#xb9ac; &#xb4f1;&#xb85d;</h1>
 
-<a class="back-btn" th:href="@{/categories}">목록으로 돌아가기</a>
+<a class="back-btn" th:href="@{/categories}">&#xbaa9;&#xb85d;&#xc73c;&#xb85c; &#xb3cc;&#xc544;&#xac00;&#xae30;</a>
 
 <div class="form-card">
     <form th:action="@{/categories/create}" th:object="${categoryForm}" method="post">
         <div class="form-group">
             <label for="name">
-                카테고리 이름<span class="required">*</span>
+                &#xce74;&#xd14c;&#xace0;&#xb9ac; &#xc774;&#xb984;<span class="required">*</span>
             </label>
             <input type="text"
                    th:field="*{name}"
                    th:classappend="${#fields.hasErrors('name')} ? 'field-error'"
-                   placeholder="예: 전자제품, 도서, 식품">
+                   placeholder="&#xc608;: &#xc804;&#xc790;&#xc81c;&#xd488;, &#xb3c4;&#xc11c;, &#xc2dd;&#xd488;">
             <span class="error-msg"
                   th:if="${#fields.hasErrors('name')}"
-                  th:errors="*{name}">이름 오류</span>
-            <p class="hint">중복되지 않는 카테고리 이름을 입력하세요.</p>
+                  th:errors="*{name}">&#xc774;&#xb984; &#xc624;&#xb958;</span>
+            <p class="hint">&#xc911;&#xbcf5;&#xb418;&#xc9c0; &#xc54a;&#xb294; &#xce74;&#xd14c;&#xace0;&#xb9ac; &#xc774;&#xb984;&#xc744; &#xc785;&#xb825;&#xd558;&#xc138;&#xc694;.</p>
         </div>
         <div>
-            <button type="submit" class="btn-submit">등록</button>
+            <button type="submit" class="btn-submit">&#xb4f1;&#xb85d;</button>
         </div>
     </form>
 </div>
+
+<hr>
+<div id="practice-footer" style="margin-top:20px; font-size:14px; color:#555;"></div>
+
+<script>
+function updateDateTime() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const formatted = `${year}\uB144 ${month}\uC6D4 ${day}\uC77C ${hours}:${minutes}:${seconds}`;
+    const footerText = `\uC2E4\uC2B5 \uC218\uD589 \uC77C\uC2DC: ${formatted} | \uD559\uBC88: 2071403 | \uC131\uBA85: \uAD8C\uBBFC\uC11C`;
+    document.getElementById("practice-footer").textContent = footerText;
+}
+
+setInterval(updateDateTime, 1000);
+updateDateTime();
+</script>
 
 </body>
 </html>
