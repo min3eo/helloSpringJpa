@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>카테고리 목록</title>
+</head>
+<body>
+
+<h1>카테고리 목록</h1>
+
+<div th:if="${successMessage}" th:text="${successMessage}">성공 메시지</div>
+<div th:if="${errorMessage}" th:text="${errorMessage}">오류 메시지</div>
+
+<p>
+    <a th:href="@{/categories/create}">카테고리 등록</a>
+</p>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>이름</th>
+        <th>작업</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="cat : ${categories}">
+        <td th:text="${cat.id}">1</td>
+        <td th:text="${cat.name}">카테고리명</td>
+        <td>
+            <form th:action="@{/categories/{id}/delete(id=${cat.id})}" method="post">
+                <button type="submit">삭제</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
