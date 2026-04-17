@@ -3,12 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--
-        th:text 를 <title>에 사용:
-        페이지 제목에 상품명을 동적으로 포함합니다.
-        ||문자열 리터럴 치환|| (Literal Substitution): 문자열 연결의 간편한 표현
-    -->
-    <title th:text="|상품 상세 - ${product.name}|">상품 상세</title>
+    <title th:text="|&#xc0c1;&#xd488; &#xc0c1;&#xc138; - ${product.name}|">&#xc0c1;&#xd488; &#xc0c1;&#xc138;</title>
     <style>
         body { font-family: 'Malgun Gothic', Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #333; }
         h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 10px; color: #2c3e50; }
@@ -22,7 +17,6 @@
         .price-value { font-size: 1.4em; font-weight: bold; color: #e74c3c; }
         .description-value { white-space: pre-wrap; line-height: 1.6; }
         .id-badge { background: #4a90d9; color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.85em; }
-        /* 액션 버튼 영역 */
         .action-area { margin-top: 24px; display: flex; gap: 12px; align-items: center; }
         .btn-edit { display: inline-block; padding: 10px 24px; background: #e67e22; color: white; text-decoration: none; border-radius: 4px; }
         .btn-edit:hover { background: #ca6f1e; }
@@ -32,75 +26,74 @@
 </head>
 <body>
 
-    <h1>상품 상세 정보</h1>
+    <h1>&#xc0c1;&#xd488; &#xc0c1;&#xc138; &#xc815;&#xbcf4;</h1>
 
-    <a class="back-btn" th:href="@{/products}">← 목록으로 돌아가기</a>
+    <a class="back-btn" th:href="@{/products}">&#x2190; &#xbaa9;&#xb85d;&#xc73c;&#xb85c; &#xb3cc;&#xc544;&#xac00;&#xae30;</a>
 
-    <!--
-        th:object="${product}":
-        이 블록 내에서 *{...} 선택 변수 표현식을 사용할 수 있습니다.
-        *{name} == ${product.name} (th:object 지정 후 *{} 사용)
-    -->
     <div class="detail-card" th:object="${product}">
-
         <div class="detail-row">
-            <span class="detail-label">상품 ID</span>
+            <span class="detail-label">&#xc0c1;&#xd488; ID</span>
             <span class="detail-value">
                 <span class="id-badge" th:text="'#' + *{id}">#1</span>
             </span>
         </div>
 
         <div class="detail-row">
-            <span class="detail-label">상품명</span>
-            <span class="detail-value" th:text="*{name}">상품명</span>
+            <span class="detail-label">&#xc0c1;&#xd488;&#xba85;</span>
+            <span class="detail-value" th:text="*{name}">&#xc0c1;&#xd488;&#xba85;</span>
         </div>
 
         <div class="detail-row">
-            <span class="detail-label">카테고리</span>
-            <span class="detail-value" th:text="${product.category != null ? product.category.name : '-'}">카테고리</span>
+            <span class="detail-label">&#xce74;&#xd14c;&#xace0;&#xb9ac;</span>
+            <span class="detail-value" th:text="${product.category != null ? product.category.name : '-'}">&#xce74;&#xd14c;&#xace0;&#xb9ac;</span>
         </div>
 
         <div class="detail-row">
-            <span class="detail-label">가격</span>
+            <span class="detail-label">&#xac00;&#xaca9;</span>
             <span class="detail-value price-value"
-                  th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')} + '원'">
-                15,000원
+                  th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')} + '&#xc6d0;'">
+                15,000&#xc6d0;
             </span>
         </div>
 
         <div class="detail-row">
-            <span class="detail-label">상품 설명</span>
-            <!--
-                th:text: HTML 이스케이핑 적용 (XSS 방지)
-                white-space: pre-wrap CSS로 줄바꿈을 보존합니다.
-            -->
+            <span class="detail-label">&#xc0c1;&#xd488; &#xc124;&#xba85;</span>
             <span class="detail-value description-value"
-                  th:text="*{description}">상품 설명이 여기에 표시됩니다.</span>
+                  th:text="*{description}">&#xc0c1;&#xd488; &#xc124;&#xba85;&#xc774; &#xc5ec;&#xae30;&#xc5d0; &#xd45c;&#xc2dc;&#xb429;&#xb2c8;&#xb2e4;.</span>
         </div>
-
     </div>
 
-    <!--
-        수정 / 삭제 버튼 영역
-    -->
     <div class="action-area">
-        <!--
-            수정 버튼: GET /products/{id}/edit 로 이동합니다.
-        -->
         <a class="btn-edit"
-           th:href="@{/products/{id}/edit(id=${product.id})}">수정</a>
+           th:href="@{/products/{id}/edit(id=${product.id})}">&#xc218;&#xc815;</a>
 
-        <!--
-            삭제 폼:
-            HTML 폼은 GET/POST만 지원하므로 POST로 삭제 요청을 보냅니다.
-            onsubmit의 confirm()으로 삭제 전 사용자 확인을 요청합니다.
-        -->
         <form th:action="@{/products/{id}/delete(id=${product.id})}"
               method="post"
-              onsubmit="return confirm('정말로 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.');">
-            <button type="submit" class="btn-delete">삭제</button>
+              onsubmit="return confirm('\uc815\ub9d0\ub85c \uc0ad\uc81c\ud558\uc2dc\uaca0\uc2b5\ub2c8\uae4c?\n\uc774 \uc791\uc5c5\uc740 \ub418\ub3cc\ub9b4 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.');">
+            <button type="submit" class="btn-delete">&#xc0ad;&#xc81c;</button>
         </form>
     </div>
+
+    <hr>
+    <div id="practice-footer" style="margin-top:20px; font-size:14px; color:#555;"></div>
+
+    <script>
+    function updateDateTime() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const formatted = `${year}\uB144 ${month}\uC6D4 ${day}\uC77C ${hours}:${minutes}:${seconds}`;
+        const footerText = `\uC2E4\uC2B5 \uC218\uD589 \uC77C\uC2DC: ${formatted} | \uD559\uBC88: 2071403 | \uC131\uBA85: \uAD8C\uBBFC\uC11C`;
+        document.getElementById("practice-footer").textContent = footerText;
+    }
+
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+    </script>
 
 </body>
 </html>
