@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>새 상품 등록 - Product Management</title>
+    <title>&#xC0C1;&#xD488; &#xB4F1;&#xB85D; - Product Management</title>
     <style>
         body { font-family: 'Malgun Gothic', Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; color: #333; }
         h1 { border-bottom: 2px solid #4a90d9; padding-bottom: 10px; color: #2c3e50; }
@@ -29,41 +29,37 @@
 </head>
 <body>
 
-    <h1>새 상품 등록</h1>
+    <h1>&#xC0C8; &#xC0C1;&#xD488; &#xB4F1;&#xB85D;</h1>
 
-    <a class="back-btn" th:href="@{/products}">← 목록으로 돌아가기</a>
+    <a class="back-btn" th:href="@{/products}">&#xC0C1;&#xD488; &#xBAA9;&#xB85D;&#xC73C;&#xB85C; &#xB3CC;&#xC544;&#xAC00;&#xAE30;</a>
 
     <form th:action="@{/products/create}" th:object="${productForm}" method="post">
         <div class="form-group">
             <label for="name">
-                상품명 <span class="required">*</span>
+                &#xC0C1;&#xD488;&#xBA85;<span class="required">*</span>
             </label>
             <input type="text"
                    th:field="*{name}"
                    th:classappend="${#fields.hasErrors('name')} ? 'field-error'"
-                   placeholder="상품명을 입력하세요" />
+                   placeholder="&#xC0C1;&#xD488;&#xBA85;&#xC744; &#xC785;&#xB825;&#xD558;&#xC138;&#xC694;" />
             <span class="error-msg"
                   th:if="${#fields.hasErrors('name')}"
-                  th:errors="*{name}">이름 오류 메시지</span>
+                  th:errors="*{name}">&#xC774;&#xB984; &#xC624;&#xB958; &#xBA54;&#xC2DC;&#xC9C0;</span>
         </div>
 
         <div class="form-group">
-            <label for="category">카테고리</label>
+            <label for="category">&#xCE74;&#xD14C;&#xACE0;&#xB9AC;</label>
             <select th:field="*{category}">
-                <option value="">-- 카테고리 선택 --</option>
-                <option value="전자제품">전자제품</option>
-                <option value="식품">식품</option>
-                <option value="의류">의류</option>
-                <option value="도서">도서</option>
-                <option value="스포츠">스포츠</option>
-                <option value="가구">가구</option>
-                <option value="기타">기타</option>
+                <option value="">-- &#xCE74;&#xD14C;&#xACE0;&#xB9AC; &#xC120;&#xD0DD; --</option>
+                <option th:each="category : ${categories}"
+                        th:value="${category.name}"
+                        th:text="${category.name}">&#xCE74;&#xD14C;&#xACE0;&#xB9AC;</option>
             </select>
         </div>
 
         <div class="form-group">
             <label for="price">
-                가격 <span class="required">*</span>
+                &#xAC00;&#xACA9;<span class="required">*</span>
             </label>
             <input type="number"
                    th:field="*{price}"
@@ -73,22 +69,22 @@
                    step="100" />
             <span class="error-msg"
                   th:if="${#fields.hasErrors('price')}"
-                  th:errors="*{price}">가격 오류 메시지</span>
-            <p class="hint">단위: 원(KRW). 100원 단위로 입력하세요.</p>
+                  th:errors="*{price}">&#xAC00;&#xACA9; &#xC624;&#xB958; &#xBA54;&#xC2DC;&#xC9C0;</span>
+            <p class="hint">&#xB2E8;&#xC704;: &#xC6D0; (KRW)</p>
         </div>
 
         <div class="form-group">
-            <label for="description">상품 설명</label>
+            <label for="description">&#xC0C1;&#xD488; &#xC124;&#xBA85;</label>
             <textarea th:field="*{description}"
                       th:classappend="${#fields.hasErrors('description')} ? 'field-error'"
-                      placeholder="상품에 대한 설명을 입력하세요..."></textarea>
+                      placeholder="&#xC0C1;&#xD488;&#xC5D0; &#xB300;&#xD55C; &#xC124;&#xBA85;&#xC744; &#xC785;&#xB825;&#xD558;&#xC138;&#xC694;"></textarea>
             <span class="error-msg"
                   th:if="${#fields.hasErrors('description')}"
-                  th:errors="*{description}">설명 오류 메시지</span>
+                  th:errors="*{description}">&#xC124;&#xBA85; &#xC624;&#xB958; &#xBA54;&#xC2DC;&#xC9C0;</span>
         </div>
 
         <div class="form-group">
-            <button type="submit" class="btn-submit">상품 등록</button>
+            <button type="submit" class="btn-submit">&#xC0C1;&#xD488; &#xB4F1;&#xB85D;</button>
         </div>
     </form>
 
