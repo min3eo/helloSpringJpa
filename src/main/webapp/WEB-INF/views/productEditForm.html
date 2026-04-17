@@ -1,17 +1,9 @@
 <!DOCTYPE html>
-<!--
-    productEditForm.html - 상품 수정 폼
-    productForm.html(등록)과 거의 동일하지만 다음이 다릅니다:
-      1. 제목: "상품 수정"
-      2. form action: /products/{id}/edit
-      3. 뒤로가기: 상품 상세 페이지
-      4. 버튼: "수정 완료"
--->
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="|'${productForm.name}' 수정 - Product Management|">상품 수정</title>
+    <title th:text="|'${productForm.name}' &#xC218;&#xC815; - Product Management|">&#xC0C1;&#xD488; &#xC218;&#xC815;</title>
     <style>
         body { font-family: 'Malgun Gothic', Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; color: #333; }
         h1 { border-bottom: 2px solid #e67e22; padding-bottom: 10px; color: #2c3e50; }
@@ -40,11 +32,11 @@
 <body>
 
     <h1>
-        상품 수정
+        &#xC0C1;&#xD488; &#xC218;&#xC815;
         <span class="editing-badge" th:text="'ID: #' + ${productForm.id}">ID: #1</span>
     </h1>
 
-    <a class="back-btn" th:href="@{/products/{id}(id=${productForm.id})}">← 상세 페이지로 돌아가기</a>
+    <a class="back-btn" th:href="@{/products/{id}(id=${productForm.id})}">&#xC0C1;&#xD488; &#xC0C1;&#xC138; &#xD398;&#xC774;&#xC9C0;&#xB85C; &#xB3CC;&#xC544;&#xAC00;&#xAE30;</a>
 
     <form th:action="@{/products/{id}/edit(id=${productForm.id})}"
           th:object="${productForm}"
@@ -52,33 +44,29 @@
 
         <div class="form-group">
             <label for="name">
-                상품명 <span class="required">*</span>
+                &#xC0C1;&#xD488;&#xBA85;<span class="required">*</span>
             </label>
             <input type="text"
                    th:field="*{name}"
                    th:classappend="${#fields.hasErrors('name')} ? 'field-error'"
-                   placeholder="상품명을 입력하세요" />
-            <span class="error-msg" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">이름 오류</span>
+                   placeholder="&#xC0C1;&#xD488;&#xBA85;&#xC744; &#xC785;&#xB825;&#xD558;&#xC138;&#xC694;" />
+            <span class="error-msg" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">&#xC774;&#xB984; &#xC624;&#xB958;</span>
         </div>
 
         <div class="form-group">
-            <label for="category">카테고리</label>
+            <label for="category">&#xCE74;&#xD14C;&#xACE0;&#xB9AC;</label>
             <select th:field="*{category}">
-                <option value="">-- 카테고리 선택 --</option>
-                <option value="전자제품">전자제품</option>
-                <option value="식품">식품</option>
-                <option value="의류">의류</option>
-                <option value="도서">도서</option>
-                <option value="스포츠">스포츠</option>
-                <option value="가구">가구</option>
-                <option value="기타">기타</option>
+                <option value="">-- &#xCE74;&#xD14C;&#xACE0;&#xB9AC; &#xC120;&#xD0DD; --</option>
+                <option th:each="category : ${categories}"
+                        th:value="${category.name}"
+                        th:text="${category.name}">&#xCE74;&#xD14C;&#xACE0;&#xB9AC;</option>
             </select>
-            <span class="error-msg" th:if="${#fields.hasErrors('category')}" th:errors="*{category}">카테고리 오류</span>
+            <span class="error-msg" th:if="${#fields.hasErrors('category')}" th:errors="*{category}">&#xCE74;&#xD14C;&#xACE0;&#xB9AC; &#xC624;&#xB958;</span>
         </div>
 
         <div class="form-group">
             <label for="price">
-                가격 <span class="required">*</span>
+                &#xAC00;&#xACA9;<span class="required">*</span>
             </label>
             <input type="number"
                    th:field="*{price}"
@@ -86,20 +74,20 @@
                    placeholder="0"
                    min="0"
                    step="100" />
-            <span class="error-msg" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">가격 오류</span>
-            <p class="hint">단위: 원(KRW). 100원 단위로 입력하세요.</p>
+            <span class="error-msg" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">&#xAC00;&#xACA9; &#xC624;&#xB958;</span>
+            <p class="hint">&#xB2E8;&#xC704;: &#xC6D0; (KRW)</p>
         </div>
 
         <div class="form-group">
-            <label for="description">상품 설명</label>
+            <label for="description">&#xC0C1;&#xD488; &#xC124;&#xBA85;</label>
             <textarea th:field="*{description}"
                       th:classappend="${#fields.hasErrors('description')} ? 'field-error'"
-                      placeholder="상품에 대한 설명을 입력하세요..."></textarea>
-            <span class="error-msg" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">설명 오류</span>
+                      placeholder="&#xC0C1;&#xD488;&#xC5D0; &#xB300;&#xD55C; &#xC124;&#xBA85;&#xC744; &#xC785;&#xB825;&#xD558;&#xC138;&#xC694;"></textarea>
+            <span class="error-msg" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">&#xC124;&#xBA85; &#xC624;&#xB958;</span>
         </div>
 
         <div class="form-group">
-            <button type="submit" class="btn-submit">수정 완료</button>
+            <button type="submit" class="btn-submit">&#xC218;&#xC815; &#xC644;&#xB8CC;</button>
         </div>
     </form>
 

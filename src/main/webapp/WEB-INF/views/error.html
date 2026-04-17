@@ -35,5 +35,26 @@
 
     <a class="btn" th:href="@{/products}">&#xc0c1;&#xd488; &#xbaa9;&#xb85d;&#xc73c;&#xb85c; &#xb3cc;&#xc544;&#xac00;&#xae30;</a>
 
+    <hr>
+    <div id="practice-footer" style="margin-top:20px; font-size:14px; color:#555;"></div>
+
+    <script>
+    function updateDateTime() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const formatted = `${year}\uB144 ${month}\uC6D4 ${day}\uC77C ${hours}:${minutes}:${seconds}`;
+        const footerText = `\uC2E4\uC2B5 \uC218\uD589 \uC77C\uC2DC: ${formatted} | \uD559\uBC88: 2071403 | \uC131\uBA85: \uAD8C\uBBFC\uC11C`;
+        document.getElementById("practice-footer").textContent = footerText;
+    }
+
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+    </script>
+
 </body>
 </html>
